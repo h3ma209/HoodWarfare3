@@ -1,14 +1,14 @@
 (function (exports) {
-  const MAP_SIZE = { width: 160, depth: 120 };
+  const MAP_SIZE = { width: 240, depth: 180 };
 
   // Collidable Axis-Aligned Bounding Boxes (x, y, z center, w, h, d dimensions)
   // y=0 is street ground level. Colliders have minY = y - h/2, maxY = y + h/2
   const COLLIDERS = [
-    // Outer street boundaries (expanded map perimeter)
-    { id: 'wall_north', x: 0, y: 10, z: -60, w: 164, h: 20, d: 4, type: 'boundary' },
-    { id: 'wall_south', x: 0, y: 10, z: 60, w: 164, h: 20, d: 4, type: 'boundary' },
-    { id: 'wall_west', x: -80, y: 10, z: 0, w: 4, h: 20, d: 124, type: 'boundary' },
-    { id: 'wall_east', x: 80, y: 10, z: 0, w: 4, h: 20, d: 124, type: 'boundary' },
+    // Outer street boundaries (expanded map perimeter: 240 x 180)
+    { id: 'wall_north', x: 0, y: 10, z: -90, w: 244, h: 20, d: 4, type: 'boundary' },
+    { id: 'wall_south', x: 0, y: 10, z: 90, w: 244, h: 20, d: 4, type: 'boundary' },
+    { id: 'wall_west', x: -120, y: 10, z: 0, w: 4, h: 20, d: 184, type: 'boundary' },
+    { id: 'wall_east', x: 120, y: 10, z: 0, w: 4, h: 20, d: 184, type: 'boundary' },
 
     // North-West Building: "BIGGIE CHEESE'S SPOT" Corner Store
     { id: 'bldg_biggie_spot', x: -28, y: 12, z: -34, w: 32, h: 24, d: 24, type: 'building', theme: 'biggie_spot' },
@@ -34,6 +34,35 @@
     // South-West Building: Bodega & Alleyway Wall
     { id: 'bldg_sw_bodega', x: -28, y: 11, z: 36, w: 30, h: 22, d: 24, type: 'building', theme: 'bodega' },
 
+    // === NEW EXPANDED SUBURBAN HOUSES & RESIDENTIAL NEIGHBORHOODS ===
+    // West Neighborhood (Grove Street Style Suburban Family Houses)
+    { id: 'house_west_1', x: -94, y: 4.8, z: -46, w: 18, h: 9.6, d: 18, type: 'house', theme: 'house_green' },
+    { id: 'house_west_2', x: -94, y: 4.8, z: 0, w: 18, h: 9.6, d: 18, type: 'house', theme: 'house_beige' },
+    { id: 'house_west_3', x: -94, y: 4.8, z: 46, w: 18, h: 9.6, d: 18, type: 'house', theme: 'house_blue' },
+
+    // East Neighborhood (Brick Townhouses & Brownstones)
+    { id: 'house_east_1', x: 78, y: 5.2, z: -52, w: 20, h: 10.4, d: 18, type: 'house', theme: 'house_brick' },
+    { id: 'house_east_2', x: 92, y: 5.2, z: 6, w: 20, h: 10.4, d: 18, type: 'house', theme: 'house_yellow' },
+    { id: 'house_east_3', x: 82, y: 5.2, z: 54, w: 20, h: 10.4, d: 18, type: 'house', theme: 'house_brick' },
+
+    // North Residential Houses & Courtyards
+    { id: 'house_north_1', x: -64, y: 5.0, z: -68, w: 18, h: 10.0, d: 16, type: 'house', theme: 'house_beige' },
+    { id: 'house_north_2', x: -16, y: 5.0, z: -68, w: 22, h: 10.0, d: 16, type: 'house', theme: 'house_blue' },
+    { id: 'house_north_3', x: 32, y: 5.0, z: -68, w: 20, h: 10.0, d: 16, type: 'house', theme: 'house_green' },
+
+    // South Residential Houses & Porches
+    { id: 'house_south_1', x: -64, y: 5.0, z: 68, w: 18, h: 10.0, d: 16, type: 'house', theme: 'house_yellow' },
+    { id: 'house_south_2', x: 0, y: 5.0, z: 68, w: 22, h: 10.0, d: 16, type: 'house', theme: 'house_brick' },
+    { id: 'house_south_3', x: 58, y: 5.0, z: 68, w: 20, h: 10.0, d: 16, type: 'house', theme: 'house_beige' },
+
+    // Jumpable Front Porches / Entry Steps for Houses
+    { id: 'porch_west_1', x: -83, y: 1.2, z: -46, w: 4, h: 2.4, d: 7, type: 'house_porch' },
+    { id: 'porch_west_2', x: -83, y: 1.2, z: 0, w: 4, h: 2.4, d: 7, type: 'house_porch' },
+    { id: 'porch_west_3', x: -83, y: 1.2, z: 46, w: 4, h: 2.4, d: 7, type: 'house_porch' },
+    { id: 'porch_east_1', x: 66, y: 1.2, z: -52, w: 4, h: 2.4, d: 7, type: 'house_porch' },
+    { id: 'porch_east_2', x: 80, y: 1.2, z: 6, w: 4, h: 2.4, d: 7, type: 'house_porch' },
+    { id: 'porch_east_3', x: 70, y: 1.2, z: 54, w: 4, h: 2.4, d: 7, type: 'house_porch' },
+
     // === PARKED STREET CARS (Cover & Atmosphere) ===
     { id: 'car_hood_lowrider_1', x: -12, y: 1.1, z: -14, w: 4.8, h: 2.1, d: 2.3, type: 'car_lowrider', color: 0x9c27b0 },
     { id: 'car_hood_taxi_2', x: 10, y: 1.1, z: -14, w: 4.8, h: 2.1, d: 2.3, type: 'car_taxi', color: 0xffca28 },
@@ -41,6 +70,8 @@
     { id: 'car_hood_sedan_4', x: 26, y: 1.1, z: 16, w: 4.7, h: 2.1, d: 2.2, type: 'car_sedan', color: 0x1565c0 },
     { id: 'car_cop_patrol_5', x: -38, y: 1.1, z: 4, w: 5.0, h: 2.2, d: 2.4, type: 'car_police_static', color: 0x11151c },
     { id: 'car_kewi_van_6', x: 40, y: 1.3, z: -2, w: 5.4, h: 2.6, d: 2.5, type: 'car_van', color: 0x33691e },
+    { id: 'car_west_hood_7', x: -74, y: 1.1, z: -24, w: 4.8, h: 2.1, d: 2.3, type: 'car_lowrider', color: 0xe91e63 },
+    { id: 'car_east_hood_8', x: 62, y: 1.1, z: 20, w: 4.8, h: 2.1, d: 2.3, type: 'car_muscle', color: 0xff6f00 },
 
     // === STREET COVER: KIWI CRATES (Right / East Side & Mid) ===
     // Main Kiwi Crate Stack from screenshot

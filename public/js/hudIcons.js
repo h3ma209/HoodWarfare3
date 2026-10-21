@@ -269,7 +269,7 @@ window.HoodHUD = (function () {
     ctx.save();
     ctx.translate(W / 2, H / 2);
 
-    const scale = 1.75; // world units to minimap pixels
+    const scale = 1.15; // world units to minimap pixels for expanded 240x180 map
 
     // Draw Central Turf Zone
     ctx.fillStyle = 'rgba(57, 255, 20, 0.12)';
@@ -278,13 +278,21 @@ window.HoodHUD = (function () {
     ctx.fillRect(-12 * scale, -12 * scale, 24 * scale, 24 * scale);
     ctx.strokeRect(-12 * scale, -12 * scale, 24 * scale, 24 * scale);
 
-    // Draw Buildings & Crates
+    // Draw Buildings, Houses & Crates
     for (const col of mapData.COLLIDERS) {
       if (col.type === 'boundary') continue;
       if (col.type === 'building' || col.type === 'subway_roof') {
         ctx.fillStyle = '#434a59';
         ctx.strokeStyle = '#151820';
         ctx.lineWidth = 1.5;
+      } else if (col.type === 'house') {
+        ctx.fillStyle = '#b45309';
+        ctx.strokeStyle = '#292524';
+        ctx.lineWidth = 1.5;
+      } else if (col.type === 'house_porch') {
+        ctx.fillStyle = '#78350f';
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 1;
       } else if (col.type === 'kiwi_crate') {
         ctx.fillStyle = '#558b2f';
         ctx.strokeStyle = '#111';

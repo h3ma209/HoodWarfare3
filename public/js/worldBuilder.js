@@ -240,8 +240,8 @@ window.HoodWorld = (function () {
     const kiwiTex = createKiwiCrateTexture();
     const cheeseTex = createCheeseCrateTexture();
 
-    // 1. Street Asphalt Floor (Expanded arena dimensions)
-    const groundGeo = new THREE.PlaneGeometry(170, 130);
+    // 1. Street Asphalt Floor (Expanded arena dimensions 250 x 190)
+    const groundGeo = new THREE.PlaneGeometry(250, 190);
     const groundMat = new THREE.MeshToonMaterial({ color: 0x454959 });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
@@ -251,10 +251,10 @@ window.HoodWorld = (function () {
     // Sidewalks (West, East, North, South curbs)
     const sidewalkMat = new THREE.MeshToonMaterial({ color: 0x7c8294 });
     const sidewalks = [
-      { x: -36, z: -32, w: 60, d: 32 },
-      { x: 34, z: -32, w: 60, d: 32 },
-      { x: -36, z: 34, w: 60, d: 30 },
-      { x: 34, z: 34, w: 60, d: 30 }
+      { x: -50, z: -40, w: 90, d: 48 },
+      { x: 50, z: -40, w: 90, d: 48 },
+      { x: -50, z: 44, w: 90, d: 46 },
+      { x: 50, z: 44, w: 90, d: 46 }
     ];
     for (const sw of sidewalks) {
       const m = new THREE.Mesh(new THREE.BoxGeometry(sw.w, 0.35, sw.d), sidewalkMat);
@@ -266,7 +266,7 @@ window.HoodWorld = (function () {
 
     // Yellow dashed road lines & central Turf Zone highlight
     const lineMat = new THREE.MeshBasicMaterial({ color: 0xffca28 });
-    for (let x = -70; x <= 70; x += 8) {
+    for (let x = -110; x <= 110; x += 8) {
       const dash = new THREE.Mesh(new THREE.PlaneGeometry(4, 0.45), lineMat);
       dash.rotation.x = -Math.PI / 2;
       dash.position.set(x, 0.03, 0);
@@ -325,6 +325,68 @@ window.HoodWorld = (function () {
             scene.add(wMesh);
           }
         }
+      } else if (col.type === 'house') {
+        const hColors = {
+          house_green: 0x4e7055,
+          house_beige: 0xc8b79b,
+          house_blue: 0x486581,
+          house_brick: 0x9c4135,
+          house_yellow: 0xd4a359
+        };
+        const hCol = hColors[col.theme] || 0xc8b79b;
+        const hGrp = new THREE.Group();
+
+        // Main House Body
+        const hMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(col.w, col.h, col.d),
+          new THREE.MeshToonMaterial({ color: hCol })
+        );
+        hMesh.position.set(0, col.h / 2, 0);
+        hMesh.castShadow = true;
+        hMesh.receiveShadow = true;
+        addComicOutline(hMesh);
+        hGrp.add(hMesh);
+
+        // Slanted / Gabled Roof (Classic San Andreas suburban house style)
+        const roofGeo = new THREE.ConeGeometry(Math.max(col.w, col.d) * 0.72, 4.2, 4);
+        roofGeo.rotateY(Math.PI / 4);
+        const roofMat = new THREE.MeshToonMaterial({ color: 0x242730 });
+        const roof = new THREE.Mesh(roofGeo, roofMat);
+        roof.position.set(0, col.h + 2.1, 0);
+        roof.scale.set(col.w / (Math.max(col.w, col.d) * 0.72), 1, col.d / (Math.max(col.w, col.d) * 0.72));
+        roof.castShadow = true;
+        addComicOutline(roof);
+        hGrp.add(roof);
+
+        // Front Door
+        const doorMat = new THREE.MeshToonMaterial({ color: 0x3e2723 });
+        const door = new THREE.Mesh(new THREE.BoxGeometry(2.4, 3.8, 0.3), doorMat);
+        const zOff = col.z < 0 ? col.d / 2 + 0.15 : -col.d / 2 - 0.15;
+        door.position.set(0, 1.9, zOff);
+        addComicOutline(door);
+        hGrp.add(door);
+
+        // Front Windows
+        const winMat = new THREE.MeshBasicMaterial({ color: 0xfff59d });
+        [-col.w * 0.32, col.w * 0.32].forEach((wx) => {
+          const wMesh = new THREE.Mesh(new THREE.BoxGeometry(2.6, 2.8, 0.2), winMat);
+          wMesh.position.set(wx, 4.8, zOff);
+          addComicOutline(wMesh);
+          hGrp.add(wMesh);
+        });
+
+        hGrp.position.set(col.x, 0, col.z);
+        scene.add(hGrp);
+      } else if (col.type === 'house_porch') {
+        const pMat = new THREE.MeshToonMaterial({ color: 0x5d4037 });
+        const pMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(col.w, col.h, col.d),
+          pMat
+        );
+        pMesh.position.set(col.x, col.y, col.z);
+        pMesh.receiveShadow = true;
+        addComicOutline(pMesh);
+        scene.add(pMesh);
       } else if (col.type === 'awning') {
         const awnMesh = new THREE.Mesh(
           new THREE.BoxGeometry(col.w, col.h, col.d),

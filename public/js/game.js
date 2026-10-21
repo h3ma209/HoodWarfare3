@@ -54,7 +54,7 @@
     mapRaycastBoxes.push(dummy);
   }
   const groundPlaneMesh = new THREE.Mesh(
-    new THREE.PlaneGeometry(140, 110),
+    new THREE.PlaneGeometry(250, 190),
     new THREE.MeshBasicMaterial({ visible: false })
   );
   groundPlaneMesh.rotation.x = -Math.PI / 2;
@@ -103,6 +103,9 @@
   let recoilKick = 0;
 
   function equipWeapon(weaponId) {
+    if (window.HoodAudio && window.HoodAudio.stopAkShoot) {
+      window.HoodAudio.stopAkShoot();
+    }
     const wCfg = MAP_DATA.WEAPONS[weaponId] || MAP_DATA.WEAPONS.cheese_blaster;
     localPlayer.weapon = wCfg.id;
     localPlayer.mag = wCfg.magSize;
@@ -384,7 +387,7 @@
     if (shot.shooterId === selfId) return; // local player already spawned visual projectile
     spawnVisualProjectile(shot.origin, shot.dir, shot.hitPoint, shot.weapon, shot.team);
     if (window.HoodAudio && window.HoodAudio.playShootPositional) {
-      window.HoodAudio.playShootPositional(shot.weapon, shot.origin, localPlayer);
+      window.HoodAudio.playShootPositional(shot.weapon, shot.origin, localPlayer, shot.shooterId);
     }
   });
 
@@ -1167,7 +1170,12 @@
   });
 
   window.addEventListener('mouseup', (e) => {
-    if (e.button === 0) mouseDown = false;
+    if (e.button === 0) {
+      mouseDown = false;
+      if (window.HoodAudio && window.HoodAudio.stopAkShoot) {
+        window.HoodAudio.stopAkShoot();
+      }
+    }
   });
 
   window.addEventListener('keydown', (e) => {
@@ -1216,6 +1224,9 @@
   let reloadDurationMs = 1200;
 
   function startReload() {
+    if (window.HoodAudio && window.HoodAudio.stopAkShoot) {
+      window.HoodAudio.stopAkShoot();
+    }
     const wCfg = MAP_DATA.WEAPONS[localPlayer.weapon];
     if (localPlayer.reloading || localPlayer.mag >= wCfg.magSize || localPlayer.reserve <= 0) return;
     localPlayer.reloading = true;

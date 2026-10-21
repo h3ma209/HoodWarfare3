@@ -96,6 +96,8 @@ window.HoodAudio = (function () {
   } catch (e) {}
 
   let akPoolIdx = 0;
+  let activeAkAudio = null;
+
   function playAkAudioDirect() {
     if (akAudioPool.length === 0) return;
     try {
@@ -104,7 +106,95 @@ window.HoodAudio = (function () {
       aud.currentTime = 0;
       aud.volume = 0.25;
       aud.play().catch(() => {});
+      activeAkAudio = aud;
     } catch (e) {}
+  }
+
+  // Active streaming state for local AK-47 gunfire
+  let activeAkSource = null;
+  let activeAkGain = null;
+  let isAkLoopPlaying = false;
+  let akLoopTailTimer = null;
+
+  // Remote player / bot AK audio streams: id -> { source, gainNode, stopTimer }
+  const remoteAkStreams = new Map();
+
+  function stopAkShoot() {
+    if (akLoopTailTimer) {
+      clearTimeout(akLoopTailTimer);
+      akLoopTailTimer = null;
+    }
+    const c = ensureCtx();
+    if (activeAkGain && c) {
+      try {
+        const now = c.currentTime;
+        activeAkGain.gain.cancelScheduledValues(now);
+        activeAkGain.gain.setValueAtTime(activeAkGain.gain.value, now);
+        activeAkGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+      } catch (e) {}
+    }
+    if (activeAkSource) {
+      try {
+        activeAkSource.stop(c ? c.currentTime + 0.09 : 0);
+      } catch (e) {}
+      activeAkSource = null;
+    }
+    if (activeAkAudio) {
+      try {
+        activeAkAudio.pause();
+        activeAkAudio.currentTime = 0;
+      } catch (e) {}
+      activeAkAudio = null;
+    }
+    activeAkGain = null;
+    isAkLoopPlaying = false;
+  }
+
+  function startOrExtendAkLoop() {
+    const c = ensureCtx();
+    const now = c ? c.currentTime : 0;
+
+    // Reset silence/tail timer on each continuous shot (stops playing ~200ms after user releases trigger)
+    if (akLoopTailTimer) {
+      clearTimeout(akLoopTailTimer);
+    }
+    akLoopTailTimer = setTimeout(() => {
+      stopAkShoot();
+    }, 220);
+
+    // If loop is already running, just keep it flowing
+    if (isAkLoopPlaying && activeAkSource) {
+      return;
+    }
+
+    isAkLoopPlaying = true;
+
+    if (c && c.state === 'running') {
+      const akBuf = audioBuffers.get('ak47_shooting');
+      if (akBuf) {
+        try {
+          const src = c.createBufferSource();
+          src.buffer = akBuf;
+          src.loop = true; // Seamless continuous Kalashnikov full-mag fire
+          src.playbackRate.setValueAtTime(0.98 + Math.random() * 0.04, now);
+
+          const g = c.createGain();
+          g.gain.setValueAtTime(0.001, now);
+          g.gain.linearRampToValueAtTime(0.26, now + 0.03);
+
+          src.connect(g);
+          g.connect(getMaster());
+          src.start(now);
+
+          activeAkSource = src;
+          activeAkGain = g;
+          return;
+        } catch (e) {}
+      }
+    }
+
+    // HTML5 fallback
+    playAkAudioDirect();
   }
 
   function ensureCtx() {
@@ -242,23 +332,9 @@ window.HoodAudio = (function () {
   function playShoot(weaponId) {
     const c = ensureCtx();
 
-    // 1. AK-47 Assault Rifle (Authentic ak47-firing-sound.mp3)
+    // 1. AK-47 Assault Rifle: plays continuous full-mag gunfire while trigger is held
     if (weaponId === 'ak47') {
-      if (c && c.state === 'running') {
-        const akBuf = audioBuffers.get('ak47_shooting');
-        if (akBuf) {
-          const src = c.createBufferSource();
-          src.buffer = akBuf;
-          src.playbackRate.setValueAtTime(0.97 + Math.random() * 0.06, c.currentTime);
-          const g = c.createGain();
-          g.gain.setValueAtTime(0.26, c.currentTime);
-          src.connect(g);
-          g.connect(getMaster());
-          src.start(c.currentTime);
-          return;
-        }
-      }
-      playAkAudioDirect();
+      startOrExtendAkLoop();
       return;
     }
 
@@ -344,7 +420,7 @@ window.HoodAudio = (function () {
   }
 
   // 3D Spatial gunshot for remote players & bots (subdued distance mix)
-  function playShootPositional(weaponId, worldPos, listenerPos) {
+  function playShootPositional(weaponId, worldPos, listenerPos, entityId = null) {
     const c = ensureCtx();
     if (!c) return;
     const now = c.currentTime;
@@ -358,7 +434,7 @@ window.HoodAudio = (function () {
     const dy = (worldPos.y || 0) - (listenerPos.y || 0);
     const dz = worldPos.z - listenerPos.z;
     const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    const maxDist = 28;
+    const maxDist = 36;
     if (dist > maxDist) return; // Beyond audible distance
 
     const normDist = dist / maxDist;
@@ -367,7 +443,63 @@ window.HoodAudio = (function () {
     let panX = 0;
     const yaw = listenerPos.yaw || 0;
     const relX = dx * Math.cos(yaw) - dz * Math.sin(yaw);
-    panX = Math.max(-0.95, Math.min(0.95, relX / 16));
+    panX = Math.max(-0.95, Math.min(0.95, relX / 20));
+
+    // For AK-47, don't spawn overlapping 2-second sounds per bullet: sustain loop per entity
+    if (weaponId === 'ak47') {
+      const eKey = entityId || `${Math.round(worldPos.x)}_${Math.round(worldPos.z)}`;
+      let stream = remoteAkStreams.get(eKey);
+      if (stream) {
+        clearTimeout(stream.stopTimer);
+        stream.stopTimer = setTimeout(() => {
+          try {
+            stream.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.08);
+            stream.src.stop(c.currentTime + 0.09);
+          } catch (e) {}
+          remoteAkStreams.delete(eKey);
+        }, 220);
+        // update spatial volume/pan in-flight
+        try {
+          stream.gain.gain.setValueAtTime(atten * 0.18, now);
+          if (stream.panner) stream.panner.pan.setValueAtTime(panX, now);
+        } catch (e) {}
+        return;
+      }
+
+      const akBuf = audioBuffers.get('ak47_shooting') || audioBuffers.get('ar_shooting');
+      if (akBuf) {
+        try {
+          const src = c.createBufferSource();
+          src.buffer = akBuf;
+          src.loop = true;
+          src.playbackRate.setValueAtTime(0.96 + Math.random() * 0.05, now);
+          const gainNode = c.createGain();
+          gainNode.gain.setValueAtTime(atten * 0.18, now);
+          let panner = null;
+          if (c.createStereoPanner) {
+            panner = c.createStereoPanner();
+            panner.pan.setValueAtTime(panX, now);
+            src.connect(panner);
+            panner.connect(gainNode);
+          } else {
+            src.connect(gainNode);
+          }
+          gainNode.connect(getMaster());
+          src.start(now);
+
+          const stopTimer = setTimeout(() => {
+            try {
+              gainNode.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.08);
+              src.stop(c.currentTime + 0.09);
+            } catch (e) {}
+            remoteAkStreams.delete(eKey);
+          }, 220);
+
+          remoteAkStreams.set(eKey, { src, gain: gainNode, panner, stopTimer });
+          return;
+        } catch (e) {}
+      }
+    }
 
     let buffer = null;
     if (weaponId === 'ak47') {
@@ -595,6 +727,7 @@ window.HoodAudio = (function () {
     preloadSounds,
     playPositionalClip,
     playShoot,
+    stopAkShoot,
     playShootPositional,
     playHitmarker,
     playExplosion,
