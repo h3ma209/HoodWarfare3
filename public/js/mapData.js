@@ -103,31 +103,64 @@
     // Center Intersection Low Cover (Moved slightly to keep center boulevard open for drive-by)
     { id: 'mid_dumpster_n', x: -14, y: 1.4, z: -10, w: 4.2, h: 2.8, d: 2.4, type: 'dumpster_yellow' },
     { id: 'mid_dumpster_s', x: 14, y: 1.4, z: 12, w: 4.2, h: 2.8, d: 2.4, type: 'dumpster_green' },
-    { id: 'mid_payphone_booth', x: 0, y: 1.8, z: -12, w: 2.2, h: 3.6, d: 2.2, type: 'center_pillar' }
+    { id: 'mid_payphone_booth', x: 0, y: 1.8, z: -12, w: 2.2, h: 3.6, d: 2.2, type: 'center_pillar' },
+
+    // === BIGGIE WEST SPAWN PROTECTIVE FORTIFICATIONS & OBSTACLES ===
+    // Sandbag / Concrete Jersey Barriers blocking direct sniper sightlines into spawn
+    { id: 'biggie_spawn_wall_front', x: -68, y: 2.2, z: 0, w: 3.5, h: 4.4, d: 28, type: 'spawn_barrier', team: 'biggie' },
+    { id: 'biggie_spawn_wall_north', x: -80, y: 2.2, z: -16, w: 24, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'biggie' },
+    { id: 'biggie_spawn_wall_south', x: -80, y: 2.2, z: 16, w: 24, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'biggie' },
+    { id: 'biggie_spawn_crate_stack_1', x: -74, y: 1.4, z: -6, w: 3.0, h: 2.8, d: 3.0, type: 'cheese_crate' },
+    { id: 'biggie_spawn_crate_stack_2', x: -74, y: 1.4, z: 6, w: 3.0, h: 2.8, d: 3.0, type: 'cheese_crate' },
+    { id: 'biggie_spawn_bunker_roof', x: -82, y: 4.6, z: 0, w: 22, h: 0.8, d: 26, type: 'subway_roof' },
+
+    // === KEWI EAST SPAWN PROTECTIVE FORTIFICATIONS & OBSTACLES ===
+    // Sandbag / Concrete Jersey Barriers blocking direct sniper sightlines into spawn
+    { id: 'kewi_spawn_wall_front', x: 68, y: 2.2, z: 0, w: 3.5, h: 4.4, d: 28, type: 'spawn_barrier', team: 'kewi' },
+    { id: 'kewi_spawn_wall_north', x: 80, y: 2.2, z: -16, w: 24, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'kewi' },
+    { id: 'kewi_spawn_wall_south', x: 80, y: 2.2, z: 16, w: 24, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'kewi' },
+    { id: 'kewi_spawn_crate_stack_1', x: 74, y: 1.4, z: -6, w: 3.0, h: 2.8, d: 3.0, type: 'kiwi_crate' },
+    { id: 'kewi_spawn_crate_stack_2', x: 74, y: 1.4, z: 6, w: 3.0, h: 2.8, d: 3.0, type: 'kiwi_crate' },
+    { id: 'kewi_spawn_bunker_roof', x: 82, y: 4.6, z: 0, w: 22, h: 0.8, d: 26, type: 'subway_roof' },
+
+    // Midfield Expanded Street Combat Cover (North & South Alleys)
+    { id: 'mid_cheese_block_n', x: -38, y: 1.3, z: -44, w: 5.5, h: 2.6, d: 2.8, type: 'cheese_crate' },
+    { id: 'mid_kiwi_block_n', x: 38, y: 1.3, z: -44, w: 5.5, h: 2.6, d: 2.8, type: 'kiwi_crate' },
+    { id: 'mid_cheese_block_s', x: -38, y: 1.3, z: 44, w: 5.5, h: 2.6, d: 2.8, type: 'cheese_crate' },
+    { id: 'mid_kiwi_block_s', x: 38, y: 1.3, z: 44, w: 5.5, h: 2.6, d: 2.8, type: 'kiwi_crate' },
+    { id: 'mid_dumpster_center_w', x: -26, y: 1.4, z: -2, w: 3.8, h: 2.8, d: 2.4, type: 'dumpster_yellow' },
+    { id: 'mid_dumpster_center_e', x: 26, y: 1.4, z: 2, w: 3.8, h: 2.8, d: 2.4, type: 'dumpster_green' }
   ];
 
   // Jump pads for verticality (lets players launch up to awnings/subway roof!)
   const JUMP_PADS = [
     { id: 'jp_west', x: -38, y: 0.2, z: -20, radius: 2.4, vy: 19, color: 0xffd700 },
     { id: 'jp_east', x: 34, y: 0.2, z: -20, radius: 2.4, vy: 19, color: 0x39ff14 },
-    { id: 'jp_south', x: 0, y: 0.2, z: 24, radius: 2.4, vy: 17, color: 0x00e5ff }
+    { id: 'jp_south', x: 0, y: 0.2, z: 32, radius: 2.4, vy: 17, color: 0x00e5ff },
+    { id: 'jp_north', x: 0, y: 0.2, z: -32, radius: 2.4, vy: 17, color: 0xff0055 },
+    { id: 'jp_spawn_w', x: -74, y: 0.2, z: 0, radius: 2.2, vy: 18, color: 0xffd700 },
+    { id: 'jp_spawn_e', x: 74, y: 0.2, z: 0, radius: 2.2, vy: 18, color: 0x39ff14 }
   ];
 
-  // Team Spawn Points (Spaced comfortably across the wider avenue)
+  // Team Spawn Points (Protected bases behind sandbag walls & bunker overhangs)
   const SPAWNS = {
     biggie: [
-      { x: -32, y: 0, z: 2, yaw: -Math.PI / 2 },
-      { x: -30, y: 0, z: -6, yaw: -Math.PI / 2 },
-      { x: -34, y: 0, z: 10, yaw: -Math.PI / 2 },
-      { x: -28, y: 0, z: -14, yaw: -Math.PI / 2 },
-      { x: -36, y: 0, z: -2, yaw: -Math.PI / 2 }
+      { x: -84, y: 0, z: 0, yaw: -Math.PI / 2 },
+      { x: -82, y: 0, z: -6, yaw: -Math.PI / 2 },
+      { x: -82, y: 0, z: 6, yaw: -Math.PI / 2 },
+      { x: -86, y: 0, z: -10, yaw: -Math.PI / 2 },
+      { x: -86, y: 0, z: 10, yaw: -Math.PI / 2 },
+      { x: -78, y: 0, z: -2, yaw: -Math.PI / 2 },
+      { x: -78, y: 0, z: 2, yaw: -Math.PI / 2 }
     ],
     kewi: [
-      { x: 32, y: 0, z: 3, yaw: Math.PI / 2 },
-      { x: 30, y: 0, z: -6, yaw: Math.PI / 2 },
-      { x: 34, y: 0, z: 10, yaw: Math.PI / 2 },
-      { x: 30, y: 0, z: -14, yaw: Math.PI / 2 },
-      { x: 36, y: 0, z: 0, yaw: Math.PI / 2 }
+      { x: 84, y: 0, z: 0, yaw: Math.PI / 2 },
+      { x: 82, y: 0, z: -6, yaw: Math.PI / 2 },
+      { x: 82, y: 0, z: 6, yaw: Math.PI / 2 },
+      { x: 86, y: 0, z: -10, yaw: Math.PI / 2 },
+      { x: 86, y: 0, z: 10, yaw: Math.PI / 2 },
+      { x: 78, y: 0, z: -2, yaw: Math.PI / 2 },
+      { x: 78, y: 0, z: 2, yaw: Math.PI / 2 }
     ]
   };
 

@@ -293,6 +293,10 @@ window.HoodHUD = (function () {
         ctx.fillStyle = '#78350f';
         ctx.strokeStyle = '#111';
         ctx.lineWidth = 1;
+      } else if (col.type === 'spawn_barrier') {
+        ctx.fillStyle = col.team === 'biggie' ? '#f59e0b' : '#10b981';
+        ctx.strokeStyle = '#000';
+        ctx.lineWidth = 1.5;
       } else if (col.type === 'kiwi_crate') {
         ctx.fillStyle = '#558b2f';
         ctx.strokeStyle = '#111';

@@ -377,6 +377,26 @@ window.HoodWorld = (function () {
 
         hGrp.position.set(col.x, 0, col.z);
         scene.add(hGrp);
+      } else if (col.type === 'spawn_barrier') {
+        const bColor = col.team === 'biggie' ? 0xd4a017 : 0x2e7d32;
+        const bMesh = new THREE.Mesh(
+          new THREE.BoxGeometry(col.w, col.h, col.d),
+          new THREE.MeshToonMaterial({ color: bColor })
+        );
+        bMesh.position.set(col.x, col.y, col.z);
+        bMesh.castShadow = true;
+        bMesh.receiveShadow = true;
+        addComicOutline(bMesh);
+
+        // Warning Hazard Stripes along top rim
+        const stripeMat = new THREE.MeshBasicMaterial({ color: 0x111827 });
+        const stripe = new THREE.Mesh(
+          new THREE.BoxGeometry(col.w * 1.02, 0.45, col.d * 1.02),
+          stripeMat
+        );
+        stripe.position.set(0, col.h * 0.42, 0);
+        bMesh.add(stripe);
+        scene.add(bMesh);
       } else if (col.type === 'house_porch') {
         const pMat = new THREE.MeshToonMaterial({ color: 0x5d4037 });
         const pMesh = new THREE.Mesh(

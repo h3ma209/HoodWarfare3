@@ -118,7 +118,7 @@ function hasLineOfSight(x1, y1, z1, x2, y2, z2) {
     const py = y1 + (y2 - y1) * t;
     const pz = z1 + (z2 - z1) * t;
     for (const c of MAP_DATA.COLLIDERS) {
-      if (c.type !== 'building' && c.type !== 'subway_wall') continue;
+      if (c.type !== 'building' && c.type !== 'subway_wall' && c.type !== 'house' && c.type !== 'spawn_barrier') continue;
       if (
         px >= c.x - c.w / 2 && px <= c.x + c.w / 2 &&
         py >= c.y - c.h / 2 && py <= c.y + c.h / 2 &&
@@ -372,8 +372,8 @@ class Room {
       z: victim.z
     });
 
-    // Hurt reaction voicelines (CJ wtf / shit) on taking heavy damage
-    if (victim.hp > 0 && Math.random() < 0.40) {
+    // Hurt reaction voicelines (CJ wtf / shit) on taking heavy damage (tasteful 16% rate)
+    if (victim.hp > 0 && Math.random() < 0.16) {
       this.broadcast('spatialSound', {
         category: 'hurt',
         x: victim.x,
@@ -403,15 +403,15 @@ class Room {
         this.addTeamScore(attacker.team, 1);
       }
 
-      // Death & Kill GTA CJ Voicelines (high probability so fights feel lively)
-      if (Math.random() < 0.70) {
+      // Death & Kill GTA CJ Voicelines (randomized ~25% frequency so it doesn't overwhelm)
+      if (Math.random() < 0.28) {
         this.broadcast('spatialSound', {
           category: 'death',
           x: victim.x,
           y: victim.y + 1.2,
           z: victim.z
         });
-      } else if (attacker && Math.random() < 0.60) {
+      } else if (attacker && Math.random() < 0.22) {
         this.broadcast('spatialSound', {
           category: 'kill',
           x: attacker.x,
@@ -602,7 +602,7 @@ class Room {
           yaw: p.yaw,
           hp: p.hp
         });
-        if (Math.random() < 0.45) {
+        if (Math.random() < 0.20) {
           this.broadcast('spatialSound', {
             category: 'spawn',
             x: p.x,
@@ -690,7 +690,7 @@ class Room {
             p.botLastGrenadeAt = now;
             const gId = `bgren_${now}_${Math.random().toString(36).slice(2, 5)}`;
             const gType = p.team === 'biggie' ? 'Cheese Grenade' : 'Kiwi Frag';
-            if (Math.random() < 0.40) {
+            if (Math.random() < 0.18) {
               this.broadcast('spatialSound', {
                 category: 'grenade',
                 x: p.x,

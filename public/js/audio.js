@@ -50,9 +50,9 @@ window.HoodAudio = (function () {
   };
 
   const CATEGORIES = {
-    spawn: ['spawn_welcome', 'spawn_again_1', 'spawn_again_2', 'spawn_dog', 'cj_1'],
+    spawn: ['spawn_welcome', 'spawn_again_1', 'spawn_again_2', 'spawn_again_3', 'spawn_dog', 'cj_1'],
     kill: ['kill_wrong_house', 'kill_casino', 'kill_shut_mouth', 'kill_cj_reactions'],
-    death: ['death_fire_1', 'death_fire_2', 'hurt_shit'],
+    death: ['death_fire_1', 'death_fire_2', 'hurt_shit', 'cj_r'],
     hurt: ['hurt_wtf', 'hurt_shit', 'cj_r'],
     grenade: ['grenade_oh_god', 'grenade_throw_1'],
     snitch: ['snitch_pull_up', 'cops_action', 'cops_long'],
@@ -259,16 +259,32 @@ window.HoodAudio = (function () {
     });
   }
 
-  // Play a sound buffer with calm 3D spatial panning & proximity roll-off
-  function playPositionalClip(keyOrCategory, worldPos, listenerPos, maxDist = 48, volume = 0.38) {
+  // Proximity Voice Shuffle Cache to prevent back-to-back duplicate clips
+  const lastPlayedPerCategory = new Map();
+  let globalLastClipTime = 0;
+
+  // Play a sound buffer with calm 3D spatial panning, anti-repeat shuffle & smart rate limiting
+  function playPositionalClip(keyOrCategory, worldPos, listenerPos, maxDist = 42, volume = 0.28) {
     const c = ensureCtx();
     if (!c) return;
+
+    const nowSec = performance.now();
+    // Global speech cooldown so voice clips don't talk over each other in cacophony
+    if (nowSec - globalLastClipTime < 1100) {
+      return;
+    }
 
     let key = keyOrCategory;
     if (CATEGORIES[keyOrCategory]) {
       const pool = CATEGORIES[keyOrCategory];
-      key = pool[Math.floor(Math.random() * pool.length)];
+      const lastKey = lastPlayedPerCategory.get(keyOrCategory);
+      // Filter out immediately repeated clip if pool has multiple options
+      const filtered = pool.filter(k => pool.length <= 1 || k !== lastKey);
+      key = filtered[Math.floor(Math.random() * filtered.length)];
+      lastPlayedPerCategory.set(keyOrCategory, key);
     }
+
+    globalLastClipTime = nowSec;
 
     const buffer = audioBuffers.get(key);
     if (!buffer) {

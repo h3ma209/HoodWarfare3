@@ -402,8 +402,8 @@
         flash.style.boxShadow = 'inset 0 0 90px rgba(255, 20, 50, 0)';
       }, 180);
 
-      if (Math.random() < 0.35 && ev.hp > 0) {
-        window.HoodAudio.playPositionalClip('hurt', null, null, 48, 0.35);
+      if (Math.random() < 0.18 && ev.hp > 0) {
+        window.HoodAudio.playPositionalClip('hurt', null, null, 36, 0.28);
       }
     } else {
       // Update victim enemy/bot HP and health bar immediately
@@ -548,8 +548,8 @@
       data.category,
       { x: data.x, y: data.y, z: data.z },
       listener,
-      50,
-      0.38
+      42,
+      0.28
     );
   });
 
