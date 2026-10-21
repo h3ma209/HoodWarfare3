@@ -33,6 +33,8 @@ window.HoodAudio = (function () {
     snitch_pull_up: '/sounds/hey-baby-you-okay-man.mp3',
     cops_action: '/sounds/all-we-had-to-do-was-follow-the-damn-train-cj_720p_hd_2.mp3',
     cops_long: '/sounds/cj2.mp3',
+    cj_1: '/sounds/cj_1.mp3',
+    cj_r: '/sounds/r.mp3',
 
     // Rifle Shoot Sounds (Authentic AR & AK-47 Gunshots)
     ar_shooting: '/sounds/ar-shooting-sound.mp3',
@@ -48,12 +50,12 @@ window.HoodAudio = (function () {
   };
 
   const CATEGORIES = {
-    spawn: ['spawn_welcome', 'spawn_again_1', 'spawn_again_2', 'spawn_dog'],
-    kill: ['kill_wrong_house', 'kill_casino', 'kill_shut_mouth'],
-    death: ['death_fire_1', 'death_fire_2'],
-    hurt: ['hurt_wtf'],
+    spawn: ['spawn_welcome', 'spawn_again_1', 'spawn_again_2', 'spawn_dog', 'cj_1'],
+    kill: ['kill_wrong_house', 'kill_casino', 'kill_shut_mouth', 'kill_cj_reactions'],
+    death: ['death_fire_1', 'death_fire_2', 'hurt_shit'],
+    hurt: ['hurt_wtf', 'hurt_shit', 'cj_r'],
     grenade: ['grenade_oh_god', 'grenade_throw_1'],
-    snitch: ['snitch_pull_up', 'cops_action'],
+    snitch: ['snitch_pull_up', 'cops_action', 'cops_long'],
     driveby: ['driveby_shout', 'driveby_horn']
   };
 
@@ -168,7 +170,7 @@ window.HoodAudio = (function () {
   }
 
   // Play a sound buffer with calm 3D spatial panning & proximity roll-off
-  function playPositionalClip(keyOrCategory, worldPos, listenerPos, maxDist = 24, volume = 0.18) {
+  function playPositionalClip(keyOrCategory, worldPos, listenerPos, maxDist = 48, volume = 0.38) {
     const c = ensureCtx();
     if (!c) return;
 
@@ -179,7 +181,17 @@ window.HoodAudio = (function () {
     }
 
     const buffer = audioBuffers.get(key);
-    if (!buffer) return;
+    if (!buffer) {
+      // Direct HTML5 Audio fallback so voice plays even before WebAudio decode or in edge states
+      if (SOUND_MANIFEST[key]) {
+        try {
+          const a = new Audio(SOUND_MANIFEST[key]);
+          a.volume = Math.min(1.0, volume * 1.5);
+          a.play().catch(() => {});
+        } catch (e) {}
+      }
+      return;
+    }
 
     const source = c.createBufferSource();
     source.buffer = buffer;
@@ -195,16 +207,16 @@ window.HoodAudio = (function () {
 
       if (dist > maxDist) return; // Beyond audible range
 
-      // Quadratic roll-off for calm distant sounds
+      // Linear/gentle quadratic roll-off so voice clips remain audible across streets
       const norm = dist / maxDist;
-      const atten = Math.max(0.01, Math.pow(1 - norm, 2));
+      const atten = Math.max(0.08, Math.pow(1 - norm, 1.4));
       gainNode.gain.setValueAtTime(atten * volume, c.currentTime);
 
       const yaw = listenerPos.yaw || 0;
       const relX = dx * Math.cos(yaw) - dz * Math.sin(yaw);
-      panX = Math.max(-0.95, Math.min(0.95, relX / 16));
+      panX = Math.max(-0.95, Math.min(0.95, relX / 24));
     } else {
-      gainNode.gain.setValueAtTime(volume * 0.65, c.currentTime);
+      gainNode.gain.setValueAtTime(volume * 0.95, c.currentTime);
     }
 
     if (c.createStereoPanner) {

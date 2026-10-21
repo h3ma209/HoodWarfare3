@@ -372,6 +372,16 @@ class Room {
       z: victim.z
     });
 
+    // Hurt reaction voicelines (CJ wtf / shit) on taking heavy damage
+    if (victim.hp > 0 && Math.random() < 0.40) {
+      this.broadcast('spatialSound', {
+        category: 'hurt',
+        x: victim.x,
+        y: victim.y + 1.2,
+        z: victim.z
+      });
+    }
+
     if (victim.hp <= 0) {
       victim.alive = false;
       victim.deaths += 1;
@@ -393,18 +403,19 @@ class Room {
         this.addTeamScore(attacker.team, 1);
       }
 
-      if (Math.random() < 0.10) {
+      // Death & Kill GTA CJ Voicelines (high probability so fights feel lively)
+      if (Math.random() < 0.70) {
         this.broadcast('spatialSound', {
           category: 'death',
           x: victim.x,
-          y: victim.y,
+          y: victim.y + 1.2,
           z: victim.z
         });
-      } else if (attacker && Math.random() < 0.08) {
+      } else if (attacker && Math.random() < 0.60) {
         this.broadcast('spatialSound', {
           category: 'kill',
           x: attacker.x,
-          y: attacker.y,
+          y: attacker.y + 1.2,
           z: attacker.z
         });
       }
@@ -591,11 +602,11 @@ class Room {
           yaw: p.yaw,
           hp: p.hp
         });
-        if (Math.random() < 0.08) {
+        if (Math.random() < 0.45) {
           this.broadcast('spatialSound', {
             category: 'spawn',
             x: p.x,
-            y: p.y,
+            y: p.y + 1.2,
             z: p.z
           });
         }
@@ -679,7 +690,7 @@ class Room {
             p.botLastGrenadeAt = now;
             const gId = `bgren_${now}_${Math.random().toString(36).slice(2, 5)}`;
             const gType = p.team === 'biggie' ? 'Cheese Grenade' : 'Kiwi Frag';
-            if (Math.random() < 0.10) {
+            if (Math.random() < 0.40) {
               this.broadcast('spatialSound', {
                 category: 'grenade',
                 x: p.x,
@@ -965,7 +976,7 @@ io.on('connection', (socket) => {
     const grenadeId = `gren_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
     const gType = p.team === 'biggie' ? 'Cheese Grenade' : 'Kiwi Frag';
 
-    if (Math.random() < 0.12) {
+    if (Math.random() < 0.50) {
       room.broadcast('spatialSound', {
         category: 'grenade',
         x: p.x,

@@ -247,7 +247,7 @@
     entry.targetPos.set(pData.x, pData.y, pData.z);
     entry.targetYaw = pData.yaw || 0;
     entry.mesh.visible = Boolean(pData.alive) || Boolean(entry.isDying);
-    entry.labelEl.style.display = pData.alive ? 'block' : 'none';
+    entry.labelEl.style.display = 'none'; // Keep player names hidden in-game to avoid revealing location
 
     const hpPct = Math.max(0, Math.min(100, (pData.hp / (pData.isCop ? 150 : 100)) * 100));
     const hpBar = entry.labelEl.querySelector('.tag-hp-bar');
@@ -399,8 +399,8 @@
         flash.style.boxShadow = 'inset 0 0 90px rgba(255, 20, 50, 0)';
       }, 180);
 
-      if (Math.random() < 0.08 && ev.hp > 0) {
-        window.HoodAudio.playPositionalClip('hurt', null, null, 24, 0.18);
+      if (Math.random() < 0.35 && ev.hp > 0) {
+        window.HoodAudio.playPositionalClip('hurt', null, null, 48, 0.35);
       }
     } else {
       // Update victim enemy/bot HP and health bar immediately
@@ -545,8 +545,8 @@
       data.category,
       { x: data.x, y: data.y, z: data.z },
       listener,
-      24,
-      0.18
+      50,
+      0.38
     );
   });
 
@@ -1608,18 +1608,8 @@
       }
 
       if (entry.data.alive) {
-        _tempLabelVec.copy(entry.mesh.position);
-        _tempLabelVec.y += 2.25;
-        _tempLabelVec.project(camera);
-        if (_tempLabelVec.z < 1 && _tempLabelVec.z > -1) {
-          const sx = (_tempLabelVec.x * 0.5 + 0.5) * window.innerWidth;
-          const sy = (-_tempLabelVec.y * 0.5 + 0.5) * window.innerHeight;
-          entry.labelEl.style.left = `${sx}px`;
-          entry.labelEl.style.top = `${sy}px`;
-          entry.labelEl.style.opacity = '1';
-        } else {
-          entry.labelEl.style.opacity = '0';
-        }
+        entry.labelEl.style.display = 'none';
+        entry.labelEl.style.opacity = '0';
       }
     }
 

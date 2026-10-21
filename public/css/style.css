@@ -28,8 +28,9 @@ body, html {
   overflow: hidden;
 }
 
-/* Floating 3D Nameplates (matches "Biggie Cheese Crew", "Cheese Blaster 9000", "Kewi-Railgun") */
+/* Floating 3D Nameplates */
 .world-tag {
+  display: none !important; /* Hide overhead name tags so enemy locations are not revealed */
   position: absolute;
   transform: translate(-50%, -100%);
   background: rgba(12, 14, 20, 0.88);
