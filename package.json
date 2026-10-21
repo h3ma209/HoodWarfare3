@@ -1,0 +1,14 @@
+{
+  "name": "hood-warfare-3",
+  "version": "1.0.0",
+  "description": "HoodWarfare: Biggie Cheese Crew vs Rza Kewi - 3D Cel-Shaded Multiplayer Browser FPS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5",
+    "three": "^0.168.0"
+  }
+}

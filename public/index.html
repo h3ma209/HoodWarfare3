@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HOOD WARFARE: Biggie Cheese vs Rza Kewi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Chakra+Petch:ital,wght@0,600;0,700;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <!-- 3D WebGL Canvas Container -->
+  <div id="game-container"></div>
+
+  <!-- Floating 3D Player Nameplates & Weapon Callouts Layer -->
+  <div id="world-labels"></div>
+
+  <!-- Damage Vignette & Ultimate Screen FX -->
+  <div id="damage-flash"></div>
+  <div id="ult-aura"></div>
+
+  <!-- ==================== GAME HUD ==================== -->
+  <div id="hud">
+    <!-- TOP LEFT: Team Scoreboard, Round Timer & Room Code Badge -->
+    <div id="top-scoreboard">
+      <div class="team-score-box biggie-box">
+        <div class="team-title">BIGGIE CHEESE</div>
+        <div class="score-row">
+          <span class="score-label">Score:</span>
+          <span id="biggie-score" class="score-val">12</span>
+        </div>
+      </div>
+
+      <div class="timer-box">
+        <span id="round-timer">04:35</span>
+        <div id="turf-status" class="turf-pill">THE BLOCK: CONTESTED</div>
+      </div>
+
+      <div class="team-score-box kewi-box">
+        <div class="team-title">RZA KEWI</div>
+        <div class="score-row">
+          <span class="score-label">Score:</span>
+          <span id="kewi-score" class="score-val">10</span>
+        </div>
+      </div>
+
+      <!-- In-Game Room Code Pill (Click to copy code for homies) -->
+      <div class="room-code-badge" id="hud-room-code-badge" title="Click to Copy Room Code for Friends">
+        <span class="room-lbl">ROOM</span>
+        <span id="hud-room-code" class="room-code-val">HOOD</span>
+        <span class="copy-icon">📋</span>
+      </div>
+    </div>
+
+    <!-- TOP RIGHT: Tactical 2D Mini-Map -->
+    <div id="minimap-wrapper">
+      <canvas id="minimap-canvas" width="210" height="210"></canvas>
+      <div class="minimap-compass">N</div>
+    </div>
+
+    <!-- CENTER: Arcade Crosshair + Hitmarker + Floating Damage -->
+    <div id="crosshair-container">
+      <div id="crosshair" class="crosshair-biggie">
+        <span class="ch-line ch-top"></span>
+        <span class="ch-line ch-right"></span>
+        <span class="ch-line ch-bottom"></span>
+        <span class="ch-line ch-left"></span>
+        <span class="ch-dot"></span>
+      </div>
+      <div id="hitmarker" class="hidden">
+        <span class="hm-1"></span>
+        <span class="hm-2"></span>
+      </div>
+      <div id="reload-indicator" class="hidden">RELOADING...</div>
+      <div id="snitch-ready-toast" class="hidden">📱 2-KILL STREAK! PRESS [3] OR [C] TO CALL SNITCH PHONE! 🚔</div>
+    </div>
+
+    <!-- Police Siren Callout Banner -->
+    <div id="police-alert-banner" class="hidden">🚔 SNITCH CALL RECEIVED! 2 COPS PULLED UP TO HELP! 🚔</div>
+
+    <!-- BOTTOM CENTER: Custom Kill-Feed Overlay (Matches Screenshot) -->
+    <div id="kill-feed"></div>
+
+    <!-- BOTTOM LEFT: Health & Ammo Bars (Matches Screenshot) -->
+    <div id="vitals-panel">
+      <div class="vital-row">
+        <div class="vital-icon heart-icon" title="Health">🤍</div>
+        <div class="bar-frame">
+          <div id="hp-bar-fill" class="bar-fill hp-fill" style="width: 100%;"></div>
+        </div>
+        <div id="hp-text" class="vital-numbers">100/100</div>
+      </div>
+      <div class="vital-row">
+        <div class="vital-icon ammo-icon" title="Ammo">🔋</div>
+        <div class="bar-frame">
+          <div id="ammo-bar-fill" class="bar-fill ammo-fill" style="width: 100%;"></div>
+        </div>
+        <div id="ammo-text" class="vital-numbers">30/90</div>
+      </div>
+      <div id="active-weapon-tag">🧀 CHEESE BLASTER 9000 [1]</div>
+    </div>
+
+    <!-- BOTTOM RIGHT: Ability Cards & Gang Character Portrait -->
+    <div id="loadout-panel">
+      <!-- Card 1: Grenade (Q or G) -->
+      <div class="ability-card" id="card-grenade" title="Throw Gang Grenade [Q / G]">
+        <canvas id="icon-grenade" width="68" height="68"></canvas>
+        <div id="grenade-cd-overlay" class="cd-overlay hidden"></div>
+        <div class="keybind-pill">Q</div>
+      </div>
+
+      <!-- Card 2: Weapon Swap / Primary Rail/Blaster (1 / 2) -->
+      <div class="ability-card active-slot" id="card-weapon" title="Switch Weapon [1 / 2]">
+        <canvas id="icon-weapon" width="68" height="68"></canvas>
+        <div class="lock-badge">1/2</div>
+        <div class="keybind-pill">WPN</div>
+      </div>
+
+      <!-- Card 3: Ultimate Overcharge (E) -->
+      <div class="ability-card" id="card-ult" title="Activate Gang Ultimate [E]">
+        <canvas id="icon-ult" width="68" height="68"></canvas>
+        <div id="ult-pct-badge" class="ult-pct">40%</div>
+        <div class="keybind-pill">E</div>
+      </div>
+
+      <!-- Card 4: 2-Kill Scorestreak Snitch Phone (3 / C) -->
+      <div class="ability-card" id="card-snitch" title="2-Kill Scorestreak: Pull Out Snitch Phone & Call 2 Cops [3 / C]">
+        <canvas id="icon-snitch" width="68" height="68"></canvas>
+        <div id="snitch-streak-badge" class="ult-pct">0/2</div>
+        <div class="keybind-pill">3 / C</div>
+      </div>
+
+      <!-- Card 5: Character Avatar Portrait -->
+      <div class="portrait-card" id="card-portrait">
+        <canvas id="icon-portrait" width="76" height="76"></canvas>
+        <div class="keybind-pill">TAB</div>
+      </div>
+    </div>
+
+    <!-- Quick Controls Hint Bar -->
+    <div id="controls-bar">
+      <span><b>WASD</b> Move</span>
+      <span><b>SPACE</b> Jump</span>
+      <span><b>SHIFT</b> Sprint</span>
+      <span><b>L-CLICK</b> Shoot</span>
+      <span><b>1</b> Primary Gang Gun</span>
+      <span><b>2</b> 1911 Pistol</span>
+      <span><b>4</b> AK-47</span>
+      <span><b>5</b> RPG-7</span>
+      <span><b>6</b> SMG</span>
+      <span><b>Q / G</b> Grenade</span>
+      <span><b>3 / C</b> 📱 Snitch Phone</span>
+      <span><b>V / B</b> 🚗 Gang Drive-By</span>
+      <span><b>E</b> Ultimate</span>
+      <span><b>M</b> Gang Menu</span>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN MENU: ROOM SYSTEM & MATCH SETTINGS ==================== -->
+  <div id="lobby-overlay">
+    <div class="lobby-card">
+      <div class="lobby-header">
+        <div class="badge-tag">MULTIPLAYER BROWSER ARCADE FPS</div>
+        <h1>HOOD WARFARE</h1>
+        <p class="subtitle">BIGGIE CHEESE CREW VS RZA KEWI • 3D CEL-SHADED STREET WARFARE</p>
+      </div>
+
+      <!-- Street Handle Setup -->
+      <div class="player-setup-row">
+        <label for="player-name-input">STREET HANDLE:</label>
+        <input type="text" id="player-name-input" maxlength="16" placeholder="Street_Hustler" value="Biggie_Boi" />
+      </div>
+
+      <!-- Room Navigation Tabs -->
+      <div class="menu-tabs">
+        <button type="button" class="menu-tab active" id="tab-btn-quickplay" data-tab="quickplay">⚡ QUICK PLAY</button>
+        <button type="button" class="menu-tab" id="tab-btn-create" data-tab="create">➕ CREATE ROOM</button>
+        <button type="button" class="menu-tab" id="tab-btn-join" data-tab="join">🔑 JOIN CODE</button>
+      </div>
+
+      <!-- Tab 1: Quick Play (Default Public Room: HOOD) -->
+      <div id="tab-panel-quickplay" class="tab-panel">
+        <div class="mode-info-card">
+          <span class="mode-icon">🏙️</span>
+          <div class="mode-desc">
+            <h3>PUBLIC STREET TURF</h3>
+            <p>Deploy directly to the primary public battleground (Room: <strong class="hl-yellow">HOOD</strong>). Matchmaking is active with auto-filled squad bots!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Create Custom Room with Match Settings -->
+      <div id="tab-panel-create" class="tab-panel hidden">
+        <div class="settings-grid">
+          <div class="setting-item">
+            <label for="room-code-create">CUSTOM ROOM CODE:</label>
+            <div class="code-input-wrap">
+              <input type="text" id="room-code-create" maxlength="8" placeholder="e.g. GANG" value="GANG" />
+              <button id="btn-random-code" type="button" class="btn-sm" title="Generate Random Code">🎲 RANDOM</button>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <label for="setting-bots">AI SQUAD BOTS / TEAM:</label>
+            <select id="setting-bots">
+              <option value="0">0 Bots (Pure 1v1 / Humans Only)</option>
+              <option value="1">1 Bot per Team (Duo Turf)</option>
+              <option value="2">2 Bots per Team</option>
+              <option value="3" selected>3 Bots per Team (Standard)</option>
+              <option value="4">4 Bots per Team</option>
+              <option value="6">6 Bots per Team (Gang War Chaos!)</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <label for="setting-score">SCORE LIMIT TO WIN:</label>
+            <select id="setting-score">
+              <option value="30">30 Kills (Quick Skirmish)</option>
+              <option value="50">50 Kills (Medium)</option>
+              <option value="75" selected>75 Kills (Standard)</option>
+              <option value="100">100 Kills (Epic Block War)</option>
+            </select>
+          </div>
+
+          <div class="setting-item">
+            <label for="setting-duration">ROUND DURATION:</label>
+            <select id="setting-duration">
+              <option value="180">3 Minutes (Fast Blitz)</option>
+              <option value="300" selected>5 Minutes (Standard)</option>
+              <option value="600">10 Minutes (Extended)</option>
+              <option value="9999">Unlimited Time (Kills Only)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 3: Join With Code -->
+      <div id="tab-panel-join" class="tab-panel hidden">
+        <div class="join-code-row">
+          <label for="room-code-join">ENTER ROOM CODE:</label>
+          <div class="code-input-wrap">
+            <input type="text" id="room-code-join" maxlength="10" placeholder="e.g. HOOD, GANG" value="" />
+            <button id="btn-quick-hood" type="button" class="btn-sm">Fill "HOOD"</button>
+          </div>
+          <p class="join-hint">Have a friend's private match code? Type or paste it above to join their street!</p>
+        </div>
+      </div>
+
+      <!-- Gang Select Grid -->
+      <div class="gang-select-title">CHOOSE YOUR SIDE:</div>
+      <div class="gang-select-grid">
+        <!-- BIGGIE CHEESE CREW -->
+        <div class="gang-option selected" id="select-biggie" data-team="biggie">
+          <div class="gang-banner biggie-banner">
+            <span class="gang-emoji">🧀👑</span>
+            <h2>BIGGIE CHEESE CREW</h2>
+          </div>
+          <div class="gang-details">
+            <p><strong>Colors:</strong> Bright Yellow Hoodies, Purple Pants &amp; Gold Chains</p>
+            <p><strong>Primary:</strong> <span class="hl-yellow">Cheese Blaster 9000</span> [1]</p>
+            <p><strong>Turf:</strong> Biggie's Spot Bodega (West Block)</p>
+          </div>
+        </div>
+
+        <!-- RZA KEWI GANG -->
+        <div class="gang-option" id="select-kewi" data-team="kewi">
+          <div class="gang-banner kewi-banner">
+            <span class="gang-emoji">🥝⚡</span>
+            <h2>RZA KEWI GANG</h2>
+          </div>
+          <div class="gang-details">
+            <p><strong>Colors:</strong> Dark Green Tactical Gear &amp; Black Berets</p>
+            <p><strong>Primary:</strong> <span class="hl-green">Kewi-Railgun Beam</span> [1]</p>
+            <p><strong>Turf:</strong> Rza Kewi Subway HQ (East Block)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lobby-actions">
+        <button id="deploy-btn" class="btn-deploy">DEPLOY TO THE STREET (LOCK MOUSE)</button>
+      </div>
+
+      <div class="multiplayer-footer">
+        <div class="room-status-line">
+          <span>Active Match: <strong id="active-room-display">HOOD (Public)</strong></span>
+          <span id="room-settings-summary">Bots: 3/team • Target: 75 Kills • 5:00</span>
+        </div>
+        <div class="share-hint">
+          🔗 Invite homies: Room Code <code id="share-code-hint">HOOD</code> at <code id="share-url">http://localhost:3000</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Feedback Banner -->
+  <div id="toast-banner" class="hidden">📋 ROOM CODE COPIED TO CLIPBOARD!</div>
+
+  <!-- ==================== TAB SCOREBOARD MODAL ==================== -->
+  <div id="tab-scoreboard" class="hidden">
+    <div class="scoreboard-modal">
+      <h2>STREET TURF STANDINGS</h2>
+      <div class="sb-columns">
+        <div class="sb-col sb-biggie">
+          <h3>🧀 BIGGIE CHEESE CREW</h3>
+          <table id="sb-table-biggie">
+            <thead><tr><th>Player</th><th>K</th><th>D</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="sb-col sb-kewi">
+          <h3>🥝 RZA KEWI</h3>
+          <table id="sb-table-kewi">
+            <thead><tr><th>Player</th><th>K</th><th>D</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MATCH END BANNER ==================== -->
+  <div id="match-end-banner" class="hidden">
+    <div class="end-box">
+      <h1 id="winner-title">BIGGIE CHEESE CREW WINS THE TURF!</h1>
+      <p id="winner-sub">Next turf war starting shortly...</p>
+      <button id="btn-play-again" class="btn-deploy">PLAY NEXT ROUND NOW</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/vendor/three/three.min.js"></script>
+  <script src="/js/mapData.js"></script>
+  <script src="/js/audio.js"></script>
+  <script src="/js/hudIcons.js"></script>
+  <script src="/js/worldBuilder.js"></script>
+  <script src="/js/game.js"></script>
+</body>
+</html>
