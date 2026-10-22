@@ -105,23 +105,25 @@
     { id: 'mid_dumpster_s', x: 14, y: 1.4, z: 12, w: 4.2, h: 2.8, d: 2.4, type: 'dumpster_green' },
     { id: 'mid_payphone_booth', x: 0, y: 1.8, z: -12, w: 2.2, h: 3.6, d: 2.2, type: 'center_pillar' },
 
-    // === BIGGIE WEST SPAWN PROTECTIVE FORTIFICATIONS & OBSTACLES ===
-    // Sandbag / Concrete Jersey Barriers blocking direct sniper sightlines into spawn
-    { id: 'biggie_spawn_wall_front', x: -68, y: 2.2, z: 0, w: 3.5, h: 4.4, d: 28, type: 'spawn_barrier', team: 'biggie' },
-    { id: 'biggie_spawn_wall_north', x: -80, y: 2.2, z: -16, w: 24, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'biggie' },
-    { id: 'biggie_spawn_wall_south', x: -80, y: 2.2, z: 16, w: 24, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'biggie' },
-    { id: 'biggie_spawn_crate_stack_1', x: -74, y: 1.4, z: -6, w: 3.0, h: 2.8, d: 3.0, type: 'cheese_crate' },
-    { id: 'biggie_spawn_crate_stack_2', x: -74, y: 1.4, z: 6, w: 3.0, h: 2.8, d: 3.0, type: 'cheese_crate' },
-    { id: 'biggie_spawn_bunker_roof', x: -82, y: 4.6, z: 0, w: 22, h: 0.8, d: 26, type: 'subway_roof' },
+    // === BIGGIE WEST SPAWN PROTECTIVE FORTIFICATIONS & FLANKING EXITS ===
+    // Sandbag / Concrete Jersey Barriers with dual exit channels (no bottleneck)
+    { id: 'biggie_spawn_wall_front_n', x: -68, y: 2.2, z: -10, w: 3.5, h: 4.4, d: 14, type: 'spawn_barrier', team: 'biggie' },
+    { id: 'biggie_spawn_wall_front_s', x: -68, y: 2.2, z: 10, w: 3.5, h: 4.4, d: 14, type: 'spawn_barrier', team: 'biggie' },
+    { id: 'biggie_spawn_wall_north', x: -84, y: 2.2, z: -26, w: 30, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'biggie' },
+    { id: 'biggie_spawn_wall_south', x: -84, y: 2.2, z: 26, w: 30, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'biggie' },
+    { id: 'biggie_spawn_crate_stack_1', x: -74, y: 1.4, z: -8, w: 3.0, h: 2.8, d: 3.0, type: 'cheese_crate' },
+    { id: 'biggie_spawn_crate_stack_2', x: -74, y: 1.4, z: 8, w: 3.0, h: 2.8, d: 3.0, type: 'cheese_crate' },
+    { id: 'biggie_spawn_bunker_roof', x: -86, y: 4.8, z: 0, w: 26, h: 0.8, d: 32, type: 'subway_roof' },
 
-    // === KEWI EAST SPAWN PROTECTIVE FORTIFICATIONS & OBSTACLES ===
-    // Sandbag / Concrete Jersey Barriers blocking direct sniper sightlines into spawn
-    { id: 'kewi_spawn_wall_front', x: 68, y: 2.2, z: 0, w: 3.5, h: 4.4, d: 28, type: 'spawn_barrier', team: 'kewi' },
-    { id: 'kewi_spawn_wall_north', x: 80, y: 2.2, z: -16, w: 24, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'kewi' },
-    { id: 'kewi_spawn_wall_south', x: 80, y: 2.2, z: 16, w: 24, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'kewi' },
-    { id: 'kewi_spawn_crate_stack_1', x: 74, y: 1.4, z: -6, w: 3.0, h: 2.8, d: 3.0, type: 'kiwi_crate' },
-    { id: 'kewi_spawn_crate_stack_2', x: 74, y: 1.4, z: 6, w: 3.0, h: 2.8, d: 3.0, type: 'kiwi_crate' },
-    { id: 'kewi_spawn_bunker_roof', x: 82, y: 4.6, z: 0, w: 22, h: 0.8, d: 26, type: 'subway_roof' },
+    // === KEWI EAST SPAWN EXPANDED PROTECTIVE FORTIFICATIONS & FLANKING EXITS ===
+    // Dual protected gates (North Flank & South Flank) so Green Team cannot be trapped or cornered!
+    { id: 'kewi_spawn_wall_front_n', x: 68, y: 2.2, z: -10, w: 3.5, h: 4.4, d: 14, type: 'spawn_barrier', team: 'kewi' },
+    { id: 'kewi_spawn_wall_front_s', x: 68, y: 2.2, z: 10, w: 3.5, h: 4.4, d: 14, type: 'spawn_barrier', team: 'kewi' },
+    { id: 'kewi_spawn_wall_north', x: 84, y: 2.2, z: -26, w: 30, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'kewi' },
+    { id: 'kewi_spawn_wall_south', x: 84, y: 2.2, z: 26, w: 30, h: 4.4, d: 3.5, type: 'spawn_barrier', team: 'kewi' },
+    { id: 'kewi_spawn_crate_stack_1', x: 74, y: 1.4, z: -8, w: 3.0, h: 2.8, d: 3.0, type: 'kiwi_crate' },
+    { id: 'kewi_spawn_crate_stack_2', x: 74, y: 1.4, z: 8, w: 3.0, h: 2.8, d: 3.0, type: 'kiwi_crate' },
+    { id: 'kewi_spawn_bunker_roof', x: 86, y: 4.8, z: 0, w: 26, h: 0.8, d: 32, type: 'subway_roof' },
 
     // Midfield Expanded Street Combat Cover (North & South Alleys)
     { id: 'mid_cheese_block_n', x: -38, y: 1.3, z: -44, w: 5.5, h: 2.6, d: 2.8, type: 'cheese_crate' },
@@ -129,38 +131,74 @@
     { id: 'mid_cheese_block_s', x: -38, y: 1.3, z: 44, w: 5.5, h: 2.6, d: 2.8, type: 'cheese_crate' },
     { id: 'mid_kiwi_block_s', x: 38, y: 1.3, z: 44, w: 5.5, h: 2.6, d: 2.8, type: 'kiwi_crate' },
     { id: 'mid_dumpster_center_w', x: -26, y: 1.4, z: -2, w: 3.8, h: 2.8, d: 2.4, type: 'dumpster_yellow' },
-    { id: 'mid_dumpster_center_e', x: 26, y: 1.4, z: 2, w: 3.8, h: 2.8, d: 2.4, type: 'dumpster_green' }
+    { id: 'mid_dumpster_center_e', x: 26, y: 1.4, z: 2, w: 3.8, h: 2.8, d: 2.4, type: 'dumpster_green' },
+
+    // NEW DIVERSE COMBAT ELEMENTS: Courtyard fountains, construction trenches, billboard barricades
+    { id: 'courtyard_monument_w', x: -46, y: 2.2, z: 0, w: 4.2, h: 4.4, d: 4.2, type: 'building', theme: 'kewi_warehouse' },
+    { id: 'courtyard_monument_e', x: 46, y: 2.2, z: 0, w: 4.2, h: 4.4, d: 4.2, type: 'building', theme: 'brick_warm' },
+    { id: 'north_trench_sandbags_1', x: -8, y: 1.1, z: -48, w: 14, h: 2.2, d: 2.2, type: 'spawn_barrier' },
+    { id: 'north_trench_sandbags_2', x: 12, y: 1.1, z: -48, w: 14, h: 2.2, d: 2.2, type: 'spawn_barrier' },
+    { id: 'south_trench_sandbags_1', x: -10, y: 1.1, z: 48, w: 14, h: 2.2, d: 2.2, type: 'spawn_barrier' },
+    { id: 'south_trench_sandbags_2', x: 10, y: 1.1, z: 48, w: 14, h: 2.2, d: 2.2, type: 'spawn_barrier' },
+    { id: 'flank_crate_cluster_nw', x: -58, y: 1.2, z: -56, w: 3.2, h: 2.4, d: 3.2, type: 'cheese_crate' },
+    { id: 'flank_crate_cluster_ne', x: 58, y: 1.2, z: -56, w: 3.2, h: 2.4, d: 3.2, type: 'kiwi_crate' },
+    { id: 'flank_crate_cluster_sw', x: -58, y: 1.2, z: 56, w: 3.2, h: 2.4, d: 3.2, type: 'cheese_crate' },
+    { id: 'flank_crate_cluster_se', x: 58, y: 1.2, z: 56, w: 3.2, h: 2.4, d: 3.2, type: 'kiwi_crate' },
+    { id: 'west_flank_car', x: -86, y: 1.1, z: 32, w: 4.8, h: 2.1, d: 2.3, type: 'car_lowrider', color: 0x4a148c },
+    { id: 'east_flank_car', x: 86, y: 1.1, z: -32, w: 4.8, h: 2.1, d: 2.3, type: 'car_muscle', color: 0x1b5e20 }
   ];
 
-  // Jump pads for verticality (lets players launch up to awnings/subway roof!)
+  // Jump pads for verticality (lets players launch up to awnings/subway roof & bases!)
   const JUMP_PADS = [
     { id: 'jp_west', x: -38, y: 0.2, z: -20, radius: 2.4, vy: 19, color: 0xffd700 },
     { id: 'jp_east', x: 34, y: 0.2, z: -20, radius: 2.4, vy: 19, color: 0x39ff14 },
     { id: 'jp_south', x: 0, y: 0.2, z: 32, radius: 2.4, vy: 17, color: 0x00e5ff },
     { id: 'jp_north', x: 0, y: 0.2, z: -32, radius: 2.4, vy: 17, color: 0xff0055 },
-    { id: 'jp_spawn_w', x: -74, y: 0.2, z: 0, radius: 2.2, vy: 18, color: 0xffd700 },
-    { id: 'jp_spawn_e', x: 74, y: 0.2, z: 0, radius: 2.2, vy: 18, color: 0x39ff14 }
+    { id: 'jp_spawn_w_main', x: -76, y: 0.2, z: 0, radius: 2.2, vy: 18, color: 0xffd700 },
+    { id: 'jp_spawn_w_north', x: -88, y: 0.2, z: -34, radius: 2.2, vy: 18, color: 0xffd700 },
+    { id: 'jp_spawn_w_south', x: -88, y: 0.2, z: 34, radius: 2.2, vy: 18, color: 0xffd700 },
+    { id: 'jp_spawn_e_main', x: 76, y: 0.2, z: 0, radius: 2.2, vy: 18, color: 0x39ff14 },
+    { id: 'jp_spawn_e_north', x: 88, y: 0.2, z: -34, radius: 2.2, vy: 18, color: 0x39ff14 },
+    { id: 'jp_spawn_e_south', x: 88, y: 0.2, z: 34, radius: 2.2, vy: 18, color: 0x39ff14 }
   ];
 
-  // Team Spawn Points (Protected bases behind sandbag walls & bunker overhangs)
+  // Widely distributed, randomized team spawn areas across bases & defensive flank zones
   const SPAWNS = {
     biggie: [
-      { x: -84, y: 0, z: 0, yaw: -Math.PI / 2 },
-      { x: -82, y: 0, z: -6, yaw: -Math.PI / 2 },
-      { x: -82, y: 0, z: 6, yaw: -Math.PI / 2 },
-      { x: -86, y: 0, z: -10, yaw: -Math.PI / 2 },
-      { x: -86, y: 0, z: 10, yaw: -Math.PI / 2 },
-      { x: -78, y: 0, z: -2, yaw: -Math.PI / 2 },
-      { x: -78, y: 0, z: 2, yaw: -Math.PI / 2 }
+      // Base Core
+      { x: -86, y: 0, z: 0, yaw: -Math.PI / 2 },
+      { x: -84, y: 0, z: -6, yaw: -Math.PI / 2 },
+      { x: -84, y: 0, z: 6, yaw: -Math.PI / 2 },
+      // North Base Exit & Alley
+      { x: -80, y: 0, z: -28, yaw: -Math.PI / 3 },
+      { x: -94, y: 0, z: -24, yaw: -Math.PI / 2 },
+      // South Base Exit & Alley
+      { x: -80, y: 0, z: 28, yaw: -Math.PI * 0.7 },
+      { x: -94, y: 0, z: 24, yaw: -Math.PI / 2 },
+      // Forward Compound Line
+      { x: -72, y: 0, z: -4, yaw: -Math.PI / 2 },
+      { x: -72, y: 0, z: 4, yaw: -Math.PI / 2 },
+      // Flanking Suburban Perimeters
+      { x: -68, y: 0, z: -50, yaw: 0 },
+      { x: -68, y: 0, z: 50, yaw: Math.PI }
     ],
     kewi: [
-      { x: 84, y: 0, z: 0, yaw: Math.PI / 2 },
-      { x: 82, y: 0, z: -6, yaw: Math.PI / 2 },
-      { x: 82, y: 0, z: 6, yaw: Math.PI / 2 },
-      { x: 86, y: 0, z: -10, yaw: Math.PI / 2 },
-      { x: 86, y: 0, z: 10, yaw: Math.PI / 2 },
-      { x: 78, y: 0, z: -2, yaw: Math.PI / 2 },
-      { x: 78, y: 0, z: 2, yaw: Math.PI / 2 }
+      // Base Core
+      { x: 86, y: 0, z: 0, yaw: Math.PI / 2 },
+      { x: 84, y: 0, z: -6, yaw: Math.PI / 2 },
+      { x: 84, y: 0, z: 6, yaw: Math.PI / 2 },
+      // North Base Exit & Alley
+      { x: 80, y: 0, z: -28, yaw: Math.PI / 3 },
+      { x: 94, y: 0, z: -24, yaw: Math.PI / 2 },
+      // South Base Exit & Alley
+      { x: 80, y: 0, z: 28, yaw: Math.PI * 0.7 },
+      { x: 94, y: 0, z: 24, yaw: Math.PI / 2 },
+      // Forward Compound Line
+      { x: 72, y: 0, z: -4, yaw: Math.PI / 2 },
+      { x: 72, y: 0, z: 4, yaw: Math.PI / 2 },
+      // Flanking Suburban Perimeters (Prevents Kewi from ever being trapped!)
+      { x: 68, y: 0, z: -50, yaw: 0 },
+      { x: 68, y: 0, z: 50, yaw: Math.PI }
     ]
   };
 

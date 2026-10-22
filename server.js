@@ -40,9 +40,9 @@ function getRandomSpawn(team) {
   const list = MAP_DATA.SPAWNS[team] || MAP_DATA.SPAWNS.biggie;
   const pt = list[Math.floor(Math.random() * list.length)];
   return {
-    x: pt.x + (Math.random() - 0.5) * 2.5,
+    x: pt.x + (Math.random() - 0.5) * 6.0,
     y: 0,
-    z: pt.z + (Math.random() - 0.5) * 2.5,
+    z: pt.z + (Math.random() - 0.5) * 6.0,
     yaw: pt.yaw
   };
 }
@@ -622,7 +622,7 @@ class Room {
           const dx = other.x - p.x;
           const dz = other.z - p.z;
           const dist = Math.sqrt(dx * dx + dz * dz);
-          if (dist < nearestDist && dist < 75) {
+          if (dist < nearestDist && dist < 120) {
             if (hasLineOfSight(p.x, p.y + 1.5, p.z, other.x, other.y + 1.4, other.z)) {
               nearestDist = dist;
               nearestEnemy = other;
@@ -633,8 +633,8 @@ class Room {
         if (now >= p.botNextMoveAt) {
           p.botNextMoveAt = now + 1200 + Math.random() * 1000;
           p.botStrafeDir = Math.random() > 0.5 ? 1 : -1;
-          const biasX = p.team === 'biggie' ? -15 + Math.random() * 14 : 15 - Math.random() * 14;
-          const biasZ = (Math.random() - 0.5) * 20;
+          const biasX = p.team === 'biggie' ? -35 + Math.random() * 45 : 35 - Math.random() * 45;
+          const biasZ = (Math.random() - 0.5) * 65;
           p.botTargetX = biasX;
           p.botTargetZ = biasZ;
         }
@@ -654,8 +654,8 @@ class Room {
             moveZ += (dz / nearestDist) * speed * 0.65;
           }
           const resolved = resolveHorizontalCollision(moveX, moveZ, p.y);
-          p.x = Math.max(-45, Math.min(45, resolved.x));
-          p.z = Math.max(-32, Math.min(32, resolved.z));
+          p.x = Math.max(-105, Math.min(105, resolved.x));
+          p.z = Math.max(-75, Math.min(75, resolved.z));
 
           const fireCooldown = p.team === 'biggie' ? 240 : 330;
           if (now - p.botLastShotAt >= fireCooldown) {
@@ -733,8 +733,8 @@ class Room {
               p.z + (dz / dist) * speed,
               p.y
             );
-            p.x = Math.max(-45, Math.min(45, resolved.x));
-            p.z = Math.max(-32, Math.min(32, resolved.z));
+            p.x = Math.max(-105, Math.min(105, resolved.x));
+            p.z = Math.max(-75, Math.min(75, resolved.z));
           }
         }
       }
