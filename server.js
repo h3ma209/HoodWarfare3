@@ -1083,6 +1083,26 @@ setInterval(() => {
   }
 }, 50);
 
-server.listen(PORT, () => {
-  console.log(`🧀🥝 HoodWarfare Server running at http://localhost:${PORT}`);
+// Server listen on 0.0.0.0 for Local Area Network (LAN) multiplayer access
+const HOST = process.env.HOST || '0.0.0.0';
+
+server.listen(PORT, HOST, () => {
+  const os = require('os');
+  const nets = os.networkInterfaces();
+  const lanIps = [];
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        lanIps.push(net.address);
+      }
+    }
+  }
+
+  console.log('----------------------------------------------------');
+  console.log(`🧀🥝 HoodWarfare 3 running on LAN & Localhost:`);
+  console.log(`  Local:   http://localhost:${PORT}`);
+  lanIps.forEach(ip => {
+    console.log(`  LAN:     http://${ip}:${PORT}`);
+  });
+  console.log('----------------------------------------------------');
 });
